@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString: connString));
 builder.Services.AddScoped<StudentService>();
+builder.Services.AddScoped<CourseService>();
 
 var app = builder.Build();
 
@@ -24,5 +25,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapStudentEndpoints();
+app.MapCoursesEndpoints();
 
 app.Run();

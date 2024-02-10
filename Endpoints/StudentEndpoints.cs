@@ -9,7 +9,7 @@ using StudentCourseHub.Services;
 
 namespace StudentCourseHub.Endpoints;
 
-public static class Students
+public static class StudentEndpoints
 {
     public static void MapStudentEndpoints(this IEndpointRouteBuilder app)
     {
@@ -20,23 +20,15 @@ public static class Students
             .WithTags("Students");
 
 
-        routes.MapPost("/", async (CreateStudentRequestDto request, StudentService service) =>
-        {
-            try
-            {
-                int id = await service.CreateStudent(request);
-                return Results.Created($"/students/{id}", request);
-            }
-            catch (Exception)
-            {
-                return Results.Problem("An unexpected error occurred while processing the request.",
-                                       statusCode: StatusCodes.Status500InternalServerError);
-            }
-        })
-        .WithSummary("Create Student")
-        .ProducesProblem(500)
-        .Produces(StatusCodes.Status201Created);
 
+        routes.MapGet("/", async (StudentService service) =>
+        {
+            var student = await service.GetAllStudents();
+            return Results.Ok(student);
+        })
+        .WithSummary("Get All Students")
+        .Produces<List<StudentViewDto>>();
+        
 
         routes.MapGet("/{id}", async (int id, StudentService service) =>
         {
@@ -50,28 +42,22 @@ public static class Students
         .Produces<StudentViewDto>();
 
 
-        routes.MapGet("/", async (StudentService service) =>
+        routes.MapPost("/", async (CreateStudentRequestDto request, StudentService service) =>
         {
-            var student = await service.GetAllStudents();
-            return Results.Ok(student);
-        })
-        .WithSummary("Get All Students")
-        .Produces<List<StudentViewDto>>();
-
-
-        routes.MapDelete("/{id}", async (int id, StudentService service) =>
-        {
-            var IsDeleted = await service.DeleteStudent(id);
-            if (IsDeleted)
+            try
             {
-                var message = $"Student with ID {id} has been successfully deleted.";
-                return Results.Ok(new { message });
-            };
-            return Results.Problem($"Student with ID {id} not found, No action taken", statusCode: 404);
+                int id = await service.CreateStudent(request);
+                return Results.Created($"/students/{id}", request);
+            }
+            catch (Exception)
+            {
+                return Results.Problem("An unexpected error occurred while processing the request.",
+                                        statusCode: StatusCodes.Status500InternalServerError);
+            }
         })
-        .WithSummary("Delete Student")
-        .ProducesProblem(404)
-        .Produces(200);
+        .WithSummary("Create Student")
+        .ProducesProblem(500)
+        .Produces(StatusCodes.Status201Created);
 
 
         routes.MapPut("/{id}", async (int id, UpdateStudentRequestDto request, StudentService service) =>
@@ -85,6 +71,21 @@ public static class Students
             return Results.Problem($"Student with ID {id} not found. No action taken.", statusCode: 404);
         })
         .WithSummary("Update Student")
+        .ProducesProblem(404)
+        .Produces(200);
+
+
+        routes.MapDelete("/{id}", async (int id, StudentService service) =>
+        {
+            var IsDeleted = await service.DeleteStudent(id);
+            if (IsDeleted)
+            {
+                var message = $"Student with ID {id} has been successfully deleted.";
+                return Results.Ok(new { message });
+            };
+            return Results.Problem($"Student with ID {id} not found, No action taken", statusCode: 404);
+        })
+        .WithSummary("Delete Student")
         .ProducesProblem(404)
         .Produces(200);
     }
