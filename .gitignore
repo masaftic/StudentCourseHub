@@ -54,3 +54,6 @@ artifacts/
 # Packages
 *.nuget.props
 *.nuget.targets
+
+
+ApiDesc.md
