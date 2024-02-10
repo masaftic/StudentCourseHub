@@ -91,4 +91,20 @@ public class StudentService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> UpdateStudent(int id, UpdateStudentRequestDto request)
+    {
+        var student = await _context.Students.FindAsync(id);
+        if (student is null || student.IsDeleted)
+        {
+            return false;
+        }
+ 
+        student.Name = request.Name;
+        student.Age = request.Age;
+        student.Email = request.Email;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

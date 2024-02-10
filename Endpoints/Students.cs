@@ -72,5 +72,20 @@ public static class Students
         .WithSummary("Delete Student")
         .ProducesProblem(404)
         .Produces(200);
+
+
+        routes.MapPut("/{id}", async (int id, UpdateStudentRequestDto request, StudentService service) =>
+        {
+            bool isUpdated = await service.UpdateStudent(id, request);
+            if (isUpdated)
+            {
+                var message = $"Student with ID {id} has been successfully updated.";
+                return Results.Ok(new { message });
+            }
+            return Results.Problem($"Student with ID {id} not found. No action taken.", statusCode: 404);
+        })
+        .WithSummary("Update Student")
+        .ProducesProblem(404)
+        .Produces(200);
     }
 }
