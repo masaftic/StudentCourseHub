@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using StudentCourseHub.Models.DTO;
 using StudentCourseHub.Services;
 
@@ -86,6 +87,7 @@ public static class CoursesEndpoints
         .WithSummary("Delete Course")
         .ProducesProblem(404)
         .Produces(200);
+
 
     }
 

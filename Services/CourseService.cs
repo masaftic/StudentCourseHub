@@ -106,4 +106,46 @@ public class CourseService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task AddStudentToCourse(int studentId, int courseId)
+    {
+        Student student = (await _context.Students
+            .Include(s => s.Courses)
+            .FirstOrDefaultAsync(s => s.StudentId == studentId))!;
+
+        Course course = (await _context.Courses
+            .Include(c => c.Students)
+            .FirstOrDefaultAsync(c => c.CourseId == courseId))!;
+
+        course.Students.Add(student);
+        student.Courses.Add(course);
+
+        await _context.SaveChangesAsync();        
+    }
+
+    public async Task<bool> IsFound(int id)
+    {
+        return await _context.Courses
+            .Where(x => !x.IsDeleted)
+            .Where(x => x.CourseId == id)
+            .AnyAsync();
+    }
+
+    public async Task<bool> RemoveStudentFromCourse(int studentId, int courseId)
+    {
+        Student student = (await _context.Students
+            .Include(s => s.Courses)
+            .FirstOrDefaultAsync(s => s.StudentId == studentId))!;
+
+        Course course = (await _context.Courses
+            .Include(c => c.Students)
+            .FirstOrDefaultAsync(c => c.CourseId == courseId))!;
+
+        if (!course.Students.Remove(student) || !student.Courses.Remove(course))
+        {
+            return false;
+        }
+        await _context.SaveChangesAsync();
+        return true;  
+    }
 }

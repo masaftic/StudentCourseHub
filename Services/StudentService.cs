@@ -107,4 +107,12 @@ public class StudentService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> IsFound(int id)
+    {
+        return await _context.Students
+            .Where(x => !x.IsDeleted)
+            .Where(x => x.StudentId == id)
+            .AnyAsync();
+    }
 }

@@ -26,5 +26,6 @@ app.UseHttpsRedirection();
 
 app.MapStudentEndpoints();
 app.MapCoursesEndpoints();
+app.MapCourseStudentRelationshipEndpoints();
 
 app.Run();
