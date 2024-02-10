@@ -13,7 +13,7 @@ public static class Students
 {
     public static void MapStudentEndpoints(this IEndpointRouteBuilder app)
     {
-        
+
         var routes = app.MapGroup("/students")
             .WithParameterValidation()
             .WithOpenApi()
@@ -25,7 +25,7 @@ public static class Students
             try
             {
                 int id = await service.CreateStudent(request);
-                return Results.Created($"/students/{id}", id);
+                return Results.Created($"/students/{id}", request);
             }
             catch (Exception)
             {
@@ -58,5 +58,19 @@ public static class Students
         .WithSummary("Get All Students")
         .Produces<List<StudentViewDto>>();
 
+
+        routes.MapDelete("/{id}", async (int id, StudentService service) =>
+        {
+            var IsDeleted = await service.DeleteStudent(id);
+            if (IsDeleted)
+            {
+                var message = $"Student with ID {id} has been successfully deleted.";
+                return Results.Ok(new { message });
+            };
+            return Results.Problem($"Student with ID {id} not found, No action taken", statusCode: 404);
+        })
+        .WithSummary("Delete Student")
+        .ProducesProblem(404)
+        .Produces(200);
     }
 }

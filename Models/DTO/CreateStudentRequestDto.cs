@@ -9,8 +9,6 @@ namespace StudentCourseHub.Models.DTO;
 
 public class CreateStudentRequestDto
 {
-    public int StudentId { get; set; }
-    
     [Required(ErrorMessage = "Name is required")]
     public required string Name { get; set; }
 

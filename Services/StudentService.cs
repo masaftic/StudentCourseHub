@@ -21,7 +21,6 @@ public class StudentService
     {
         var student = new Student
         {
-            StudentId = request.StudentId,
             Name = request.Name,
             Email = request.Email,
             Age = request.Age,
@@ -47,6 +46,7 @@ public class StudentService
                 Email = x.Email,
                 Age = x.Age,
                 Courses = x.Courses
+                .Where(course => !course.IsDeleted)
                 .Select(course => new CourseViewSummaryDto
                 {
                     CourseId = course.CourseId,
@@ -68,6 +68,7 @@ public class StudentService
                 Email = x.Email,
                 Age = x.Age,
                 Courses = x.Courses
+                .Where(course => !course.IsDeleted)
                 .Select(course => new CourseViewSummaryDto
                 {
                     CourseId = course.CourseId,
@@ -76,5 +77,18 @@ public class StudentService
                 })
             })
             .ToListAsync();
+    }
+
+    public async Task<bool> DeleteStudent(int id)
+    {
+        var student = await _context.Students.FindAsync(id);
+        if (student is null || student.IsDeleted)
+        {
+            return false;
+        }
+ 
+        student.IsDeleted = true;
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
