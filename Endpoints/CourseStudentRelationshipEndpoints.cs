@@ -12,9 +12,9 @@ public static class CourseStudentRelationshipEndpoints
     {
         var routes = app.MapGroup("")
             .WithOpenApi()
-            .WithTags("Student Course Relationship");
+            .WithTags("StudentCourseRelationship");
 
-        app.MapPost("courses/{courseId}/students/{studentId}", async (int courseId, int studentId, CourseService courseService, StudentService studentService) =>
+		routes.MapPost("courses/{courseId}/students/{studentId}", async (int courseId, int studentId, CourseService courseService, StudentService studentService) =>
         {
             if (!await courseService.IsFound(courseId))
             {
@@ -35,7 +35,7 @@ public static class CourseStudentRelationshipEndpoints
         .Produces(StatusCodes.Status201Created);
 
 
-        app.MapDelete("courses/{courseId}/students/{studentId}", async (int courseId, int studentId, CourseService courseService, StudentService studentService) =>
+		routes.MapDelete("courses/{courseId}/students/{studentId}", async (int courseId, int studentId, CourseService courseService, StudentService studentService) =>
         {
             if (!await courseService.IsFound(courseId))
             {
